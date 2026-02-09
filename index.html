@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashPay - The Fun UPI Dialer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --secondary: #06d6a0;
+            --dark: #1a1a2e;
+            --light: #f8fafc;
+            --accent: #ffd166;
+            --gradient: linear-gradient(135deg, #7c3aed 0%, #06d6a0 100%);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header & Navigation */
+        header {
+            padding: 25px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .hero-content {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 30px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .phone-mockup {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: #222;
+            border-radius: 40px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 10px solid #111;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .app-screen {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .scan-area {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            border: 2px dashed var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qr-animation {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .qr-lines {
+            width: 80%;
+            height: 80%;
+            position: relative;
+        }
+        
+        .qr-line {
+            position: absolute;
+            background: var(--secondary);
+        }
+        
+        .line1 { top: 0; left: 0; width: 100%; height: 2px; animation: scan 2s infinite linear; }
+        .line2 { top: 20%; left: 0; width: 100%; height: 2px; animation: scan 2s infinite linear 0.5s; }
+        .line3 { top: 40%; left: 0; width: 100%; height: 2px; animation: scan 2s infinite linear 1s; }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0.3; }
+        }
+        
+        .scan-text {
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .action-btn:hover {
+            background: rgba(124, 58, 237, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .action-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .action-name {
+            font-size: 12px;
+        }
+        
+        .streak-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+        
+        .streak-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .streak-count {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        /* Problem & Solution Section */
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .problem-section, .solution-section {
+            padding: 100px 0;
+        }
+        
+        .problem-container, .solution-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 50px;
+        }
+        
+        .problem-content, .solution-content {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .problem-img, .solution-img {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .boring-process {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #94a3b8;
+        }
+        
+        .process-step i {
+            margin-right: 15px;
+            font-size: 20px;
+            color: #64748b;
+        }
+        
+        .process-step.active {
+            color: white;
+        }
+        
+        .process-step.active i {
+            color: var(--primary);
+        }
+        
+        .process-step.active .step-text {
+            font-weight: 600;
+        }
+        
+        .step-text {
+            font-size: 18px;
+        }
+        
+        .dialer-display {
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+            border: 1px solid #333;
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 100px 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(124, 58, 237, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-desc {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .demo-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-steps {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .demo-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 200px;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(6, 214, 160, 0.1) 100%);
+        }
+        
+        .cta-section h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #cbd5e1;
+        }
+        
+        .app-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .badge:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .copyright {
+            color: #94a3b8;
+            margin-top: 20px;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 150px 0 60px;
+                flex-direction: column;
+            }
+            
+            .hero-content {
+                padding-right: 0;
+                margin-bottom: 50px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            opacity: 0;
+        }
+        
+        /* QR Code Demo */
+        .qr-demo-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .qr-sample {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qr-pattern {
+            display: grid;
+            grid-template-columns: repeat(25, 1fr);
+            grid-template-rows: repeat(25, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .qr-cell {
+            background: black;
+        }
+        
+        .qr-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-bolt"></i> FlashPay
+                </div>
+                <div class="nav-links">
+                    <a href="#problem">The Problem</a>
+                    <a href="#solution">The Solution</a>
+                    <a href="#features">Features</a>
+                    <a href="#demo">How it Works</a>
+                </div>
+                <button class="cta-button" id="notifyBtn">Notify Me</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Turn *99# Banking Into A Fun Experience</h1>
+                <p>FlashPay transforms the boring *99# UPI process into a delightful, gamified experience. Scan QR codes, send money with one tap, and unlock achievements as you bank!</p>
+                <div class="hero-buttons">
+                    <button class="cta-button"><i class="fab fa-google-play"></i> Get it on Play Store</button>
+                    <button class="cta-button" style="background: #333;"><i class="fab fa-apple"></i> Download for iOS</button>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <div class="phone-frame floating">
+                    <div class="phone-screen">
+                        <div class="app-screen">
+                            <div class="app-header">
+                                <div class="app-title">FlashPay</div>
+                                <div style="color: var(--secondary);"><i class="fas fa-crown"></i> Pro</div>
+                            </div>
+                            
+                            <div class="scan-area">
+                                <div class="qr-animation">
+                                    <div class="qr-lines">
+                                        <div class="qr-line line1"></div>
+                                        <div class="qr-line line2"></div>
+                                        <div class="qr-line line3"></div>
+                                    </div>
+                                </div>
+                                <div class="scan-text">Point at a QR Code to Pay</div>
+                            </div>
+                            
+                            <div class="quick-actions">
+                                <div class="action-btn">
+                                    <div class="action-icon">👨</div>
+                                    <div class="action-name">Dad</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon">👩</div>
+                                    <div class="action-name">Mom</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon">👨‍💼</div>
+                                    <div class="action-name">Landlord</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon">🍕</div>
+                                    <div class="action-name">Pizza</div>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-actions">
+                                <div class="action-btn">
+                                    <div class="action-icon"><i class="fas fa-microphone"></i></div>
+                                    <div class="action-name">Voice</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon"><i class="fas fa-history"></i></div>
+                                    <div class="action-name">History</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon"><i class="fas fa-gamepad"></i></div>
+                                    <div class="action-name">Games</div>
+                                </div>
+                                <div class="action-btn">
+                                    <div class="action-icon"><i class="fas fa-cog"></i></div>
+                                    <div class="action-name">Settings</div>
+                                </div>
+                            </div>
+                            
+                            <div class="streak-bar">
+                                <div class="streak-info">
+                                    <i class="fas fa-fire" style="color: var(--accent);"></i>
+                                    <div class="streak-count">7 Day Streak!</div>
+                                </div>
+                                <div style="font-size: 12px;">+50 XP Today</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section" id="problem">
+        <div class="container">
+            <h2 class="section-title">The Boring Reality of *99#</h2>
+            <div class="problem-container">
+                <div class="problem-content">
+                    <div class="boring-process">
+                        <div class="process-step active">
+                            <i class="fas fa-search"></i>
+                            <div class="step-text">Open Phone Dialer</div>
+                        </div>
+                        <div class="process-step active">
+                            <i class="fas fa-hand-pointer"></i>
+                            <div class="step-text">Type *99# and Call</div>
+                        </div>
+                        <div class="process-step">
+                            <i class="fas fa-keyboard"></i>
+                            <div class="step-text">Navigate USSD Menu</div>
+                        </div>
+                        <div class="process-step">
+                            <i class="fas fa-id-card"></i>
+                            <div class="step-text">Type Full UPI ID</div>
+                        </div>
+                        <div class="process-step">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div class="step-text">Enter Amount & Confirm</div>
+                        </div>
+                        <div class="process-step">
+                            <i class="fas fa-save"></i>
+                            <div class="step-text">Save Transaction ID</div>
+                        </div>
+                        
+                        <div class="dialer-display" id="dialerDisplay">
+                            *99*1*amit@upi*500#
+                        </div>
+                    </div>
+                </div>
+                <div class="problem-img">
+                    <div style="font-size: 120px; color: var(--primary);">
+                        😴
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution-section" id="solution">
+        <div class="container">
+            <h2 class="section-title">FlashPay Magic Solution</h2>
+            <div class="solution-container">
+                <div class="solution-img">
+                    <div class="qr-demo-container">
+                        <div class="qr-sample">
+                            <div class="qr-pattern" id="qrPattern"></div>
+                            <div class="qr-logo">FP</div>
+                        </div>
+                        <div style="text-align: center; margin-top: 15px; font-weight: 600;">Scan QR → Auto-Fill → Send!</div>
+                    </div>
+                </div>
+                <div class="solution-content">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <h3 class="feature-title">One-Tap QR Scanning</h3>
+                        <p class="feature-desc">Point your camera at any UPI QR code. FlashPay automatically extracts the UPI ID and amount, then prepares the *99# dialer code for you.</p>
+                    </div>
+                    
+                    <div class="feature-card" style="margin-top: 30px;">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3 class="feature-title">Instant Dialer Integration</h3>
+                        <p class="feature-desc">With one tap, FlashPay opens your phone dialer with the correct *99# code already filled. Just press call to send money!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Amazing Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="feature-title">Gamified Banking</h3>
+                    <p class="feature-desc">Earn XP, unlock achievements, and maintain streaks for using *99# banking. Turn payments into a fun game!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Voice Commands</h3>
+                    <p class="feature-desc">"Send 500 to Mom" - Just say it and FlashPay handles the rest. No typing needed!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title">Contact Speed Dials</h3>
+                    <p class="feature-desc">Save frequent recipients as speed dials. Pay with one tap instead of typing UPI IDs.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-title">Beautiful Themes</h3>
+                    <p class="feature-desc">Choose from multiple themes - Dark, Neon, Retro, or Cyberpunk. Make banking visually appealing!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Spending Insights</h3>
+                    <p class="feature-desc">Get beautiful charts and insights on your *99# transactions. Track spending patterns effortlessly.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Security First</h3>
+                    <p class="feature-desc">FlashPay doesn't store any financial data. All processing happens locally on your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section" id="demo">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="demo-container">
+                <div class="demo-box">
+                    <h3 style="font-size: 24px; margin-bottom: 20px;">From QR to Payment in 3 Seconds</h3>
+                    <p>FlashPay makes *99# banking as easy as scanning a QR code. Watch how it transforms the tedious process:</p>
+                    
+                    <div class="demo-steps">
+                        <div class="demo-step">
+                            <div class="step-number">1</div>
+                            <h4>Scan QR</h4>
+                            <p>Point your camera at any UPI QR code</p>
+                        </div>
+                        
+                        <div class="demo-step">
+                            <div class="step-number">2</div>
+                            <h4>Auto-Fill</h4>
+                            <p>FlashPay extracts details and prepares dialer code</p>
+                        </div>
+                        
+                        <div class="demo-step">
+                            <div class="step-number">3</div>
+                            <h4>Send Money</h4>
+                            <p>Tap to open dialer with code, call to complete payment</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="cta-button" id="tryDemo" style="padding: 15px 30px; font-size: 18px;">
+                    <i class="fas fa-play-circle"></i> Try Interactive Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Transform Your *99# Experience?</h2>
+            <p>Join thousands who have made banking fun with FlashPay. Scan, tap, and send money with joy!</p>
+            
+            <button class="cta-button" style="padding: 18px 40px; font-size: 20px;">
+                <i class="fas fa-download"></i> Download FlashPay Now
+            </button>
+            
+            <div class="app-badges">
+                <div class="badge">
+                    <i class="fas fa-star" style="color: var(--accent);"></i>
+                    <div>4.9/5 Rating</div>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-users" style="color: var(--secondary);"></i>
+                    <div>50,000+ Users</div>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-bolt" style="color: var(--primary);"></i>
+                    <div>3-Second Payments</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <i class="fas fa-bolt"></i> FlashPay
+            </div>
+            <p>Making *99# banking fun, fast, and delightful for everyone.</p>
+            <div class="copyright">
+                &copy; 2023 FlashPay. All rights reserved. | This is a concept demo.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Generate QR pattern
+        function generateQRPattern() {
+            const container = document.getElementById('qrPattern');
+            container.innerHTML = '';
+            
+            // Create a simple QR-like pattern
+            for (let i = 0; i < 25; i++) {
+                for (let j = 0; j < 25; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'qr-cell';
+                    
+                    // Create pattern - fill based on position to create QR-like appearance
+                    const shouldFill = (i < 7 && j < 7) || 
+                                      (i < 7 && j > 17) || 
+                                      (i > 17 && j < 7) ||
+                                      (i % 2 === 0 && j % 2 === 0) ||
+                                      (Math.random() > 0.6);
+                    
+                    cell.style.opacity = shouldFill ? '1' : '0';
+                    cell.style.transition = 'opacity 0.3s';
+                    
+                    container.appendChild(cell);
+                }
+            }
+        }
+        
+        // Animate the boring process steps
+        let currentStep = 0;
+        const processSteps = document.querySelectorAll('.process-step');
+        
+        function animateProcess() {
+            if (currentStep > 0) {
+                processSteps[currentStep - 1].classList.remove('active');
+            }
+            
+            processSteps[currentStep].classList.add('active');
+            currentStep = (currentStep + 1) % processSteps.length;
+            
+            // Update dialer display
+            const dialer = document.getElementById('dialerDisplay');
+            const upiIds = ['amit@upi', 'priya@okhdfcbank', 'shop@icici', 'friendsplit@paytm'];
+            const amounts = [500, 1200, 750, 300];
+            const randomId = upiIds[Math.floor(Math.random() * upiIds.length)];
+            const randomAmount = amounts[Math.floor(Math.random() * amounts.length)];
+            
+            dialer.textContent = `*99*1*${randomId}*${randomAmount}#`;
+            
+            // Add confetti when step 5 is active (payment confirmation)
+            if (currentStep === 5) {
+                createConfetti();
+            }
+        }
+        
+        // Create confetti animation
+        function createConfetti() {
+            const colors = ['#7c3aed', '#06d6a0', '#ffd166', '#ef476f'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `-10px`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = confetti.style.width;
+                
+                document.body.appendChild(confetti);
+                
+                // Animate confetti
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                });
+                
+                // Remove confetti after animation
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+        
+        // Interactive demo
+        document.getElementById('tryDemo').addEventListener('click', function() {
+            // Show scanning animation
+            const scanArea = document.querySelector('.scan-area');
+            const originalBorder = scanArea.style.border;
+            const originalText = document.querySelector('.scan-text').textContent;
+            
+            scanArea.style.border = '2px solid #06d6a0';
+            scanArea.style.backgroundColor = 'rgba(6, 214, 160, 0.1)';
+            document.querySelector('.scan-text').textContent = 'QR Code Detected!';
+            
+            // Animate QR lines faster
+            const lines = document.querySelectorAll('.qr-line');
+            lines.forEach(line => {
+                line.style.animationDuration = '0.5s';
+            });
+            
+            // After 1.5 seconds, show success
+            setTimeout(() => {
+                scanArea.style.border = '2px solid #7c3aed';
+                scanArea.style.backgroundColor = 'rgba(124, 58, 237, 0.1)';
+                document.querySelector('.scan-text').textContent = 'Payment Ready!';
+                
+                // Create confetti
+                createConfetti();
+                
+                // Show dialer code
+                const dialerCode = '*99*1*restaurant@upi*1200#';
+                alert(`FlashPay would now open your dialer with:\n\n${dialerCode}\n\nJust press "Call" to send ₹1200!`);
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    scanArea.style.border = originalBorder;
+                    scanArea.style.backgroundColor = '';
+                    document.querySelector('.scan-text').textContent = originalText;
+                    lines.forEach(line => {
+                        line.style.animationDuration = '2s';
+                    });
+                }, 3000);
+            }, 1500);
+        });
+        
+        // Notify button
+        document.getElementById('notifyBtn').addEventListener('click', function() {
+            const email = prompt('Enter your email to get notified when FlashPay launches:');
+            if (email) {
+                alert(`Thanks! We'll notify you at ${email} when FlashPay is ready.`);
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateQRPattern();
+            
+            // Animate process steps every 3 seconds
+            setInterval(animateProcess, 3000);
+            
+            // Animate QR pattern every 5 seconds
+            setInterval(generateQRPattern, 5000);
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
